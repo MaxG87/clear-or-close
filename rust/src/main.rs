@@ -25,8 +25,32 @@ fn choose_weighted() -> char {
 }
 
 
+/// Sample from Hypergeometric Distribution
+///
+/// This function takes a vector of counts and draws k elements from those
+/// without replacement. It will return how often each element was drawn.
+///
+/// The returned vector will be hypergeometric distributed.
+fn sample_hypergeometric(counts: Vec<u64>, k: u64) -> Vec<u64> {
+    let mut rng = thread_rng();
+    let mut ret_vec = vec![0; counts.len()];
+    let mut counts_mut = counts;
+    for _ in 0..k {
+        let dist = WeightedIndex::new(&counts_mut).unwrap();
+        let sampled_elem = dist.sample(&mut rng);
+        counts_mut[sampled_elem] -= 1;
+        ret_vec[sampled_elem] += 1;
+    }
+    return ret_vec;
+}
+
+
 fn main() {
     println!("The faculty of {} is {}", 5, fac(5));
     println!("The result of the coin flip is {}", flip_coin());
     println!("The result of the weighted sampling is {}", choose_weighted());
+    println!(
+        "The result of the hypergeometric sampling is {}",
+        sample_hypergeometric(vec![10, 10], 20)[0]
+    );
 }
