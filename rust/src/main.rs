@@ -8,7 +8,7 @@ use rand::thread_rng;
 /// without replacement. It will return how often each element was drawn.
 ///
 /// The returned vector will be hypergeometric distributed.
-fn sample_hypergeometric(counts: Vec<u64>, k: u64) -> Vec<u64> {
+fn sample_hypergeometric(counts: Vec<u32>, k: u32) -> Vec<u32> {
     let mut rng = thread_rng();
     let mut ret_vec = vec![0; counts.len()];
     let mut counts_mut = counts;
@@ -23,12 +23,12 @@ fn sample_hypergeometric(counts: Vec<u64>, k: u64) -> Vec<u64> {
 
 
 fn main() {
-    let n_elligible_voters = 46_500_000;
-    let turnout: f64 = 0.7221;
-    let n_voters: u32 = (n_elligible_voters as f64 * turnout).floor() as u32;
+    const N_ELLIGIBLE_VOTERS: u32 = 46_500_000;
+    const TURNOUT: f64 = 0.7221;
+    const N_VOTERS: u32 = (N_ELLIGIBLE_VOTERS as f64 * TURNOUT) as u32;
 
     println!(
         "The result of the hypergeometric sampling is {}",
-        sample_hypergeometric(vec![n_elligible_voters/2, n_elligible_voters/2], n_voters as u64)[0]
+        sample_hypergeometric(vec![N_ELLIGIBLE_VOTERS/2, N_ELLIGIBLE_VOTERS/2], N_VOTERS)[0]
     );
 }
