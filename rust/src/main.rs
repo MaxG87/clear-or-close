@@ -49,8 +49,13 @@ fn main() {
     println!("The faculty of {} is {}", 5, fac(5));
     println!("The result of the coin flip is {}", flip_coin());
     println!("The result of the weighted sampling is {}", choose_weighted());
+
+    let n_elligible_voters = 46_500_000;
+    let turnout: f64 = 0.7221;
+    let n_voters: u32 = (n_elligible_voters as f64 * turnout).floor() as u32;
+
     println!(
         "The result of the hypergeometric sampling is {}",
-        sample_hypergeometric(vec![10, 10], 20)[0]
+        sample_hypergeometric(vec![n_elligible_voters/2, n_elligible_voters/2], n_voters as u64)[0]
     );
 }
