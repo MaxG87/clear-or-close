@@ -1,5 +1,6 @@
 use rand::distributions::*;
 use rand::thread_rng;
+use rand::rngs::ThreadRng;
 
 
 /// Sample from Hypergeometric Distribution
@@ -8,8 +9,7 @@ use rand::thread_rng;
 /// without replacement. It will return how often each element was drawn.
 ///
 /// The returned vector will be hypergeometric distributed.
-fn sample_hypergeometric(counts: &[u32], k: u32) -> Vec<u32> {
-    let mut rng = thread_rng();
+fn sample_hypergeometric(counts: &[u32], k: u32, mut rng: &mut ThreadRng) -> Vec<u32> {
     let mut ret_vec = vec![0; counts.len()];
     let mut counts_mut = counts.to_vec();
     for _ in 0..k {
@@ -26,8 +26,9 @@ fn monte_carlo_significance_test_for_binary_election(
     counts: &[u32], k: u32, nrounds: usize, n_votes_majority_option: u32
 ) -> u32 {
     let mut is_extreme = 0;
+    let mut rng = thread_rng();
     for _ in 0..nrounds {
-        let result = sample_hypergeometric(&counts, k);
+        let result = sample_hypergeometric(&counts, k, &mut rng);
         let sampled_majority_votes: u32 = *result.iter().max().unwrap();
         if sampled_majority_votes >= n_votes_majority_option {
             is_extreme += 1;
