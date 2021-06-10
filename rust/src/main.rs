@@ -8,10 +8,10 @@ use rand::thread_rng;
 /// without replacement. It will return how often each element was drawn.
 ///
 /// The returned vector will be hypergeometric distributed.
-fn sample_hypergeometric(counts: Vec<u32>, k: u32) -> Vec<u32> {
+fn sample_hypergeometric(counts: &[u32], k: u32) -> Vec<u32> {
     let mut rng = thread_rng();
     let mut ret_vec = vec![0; counts.len()];
-    let mut counts_mut = counts;
+    let mut counts_mut = counts.to_vec();
     for _ in 0..k {
         let dist = WeightedIndex::new(&counts_mut).unwrap();
         let sampled_elem = dist.sample(&mut rng);
@@ -22,10 +22,19 @@ fn sample_hypergeometric(counts: Vec<u32>, k: u32) -> Vec<u32> {
 }
 
 
-fn main() {
-    const N_ELLIGIBLE_VOTERS: u32 = 46_500_000;
-    const TURNOUT: f64 = 0.7221;
-    const N_VOTERS: u32 = (N_ELLIGIBLE_VOTERS as f64 * TURNOUT) as u32;
+fn monte_carlo_significance_test_for_binary_election(
+    counts: &[u32], k: u32, nrounds: usize, n_votes_majority_option: u32
+) -> u32 {
+    let mut is_extreme = 0;
+    for _ in 0..nrounds {
+        let result = sample_hypergeometric(&counts, k);
+        let sampled_majority_votes: u32 = *result.iter().max().unwrap();
+        if sampled_majority_votes >= n_votes_majority_option {
+            is_extreme += 1;
+        }
+    }
+    return is_extreme;
+}
 
     println!(
         "The result of the hypergeometric sampling is {}",
