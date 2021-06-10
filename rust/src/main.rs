@@ -36,8 +36,34 @@ fn monte_carlo_significance_test_for_binary_election(
     return is_extreme;
 }
 
+
+fn main() {
+    const N_ROUNDS: usize = 90_000;
+    // const N_ELLIGIBLE_VOTERS: u32 = 46_500_000;
+    const N_ELLIGIBLE_VOTERS: u32 = 1_000;
+    const TURNOUT: f64 = 0.7221;
+    const SHARE_OF_LEAVE: f64 = 0.5189;
+    const N_VOTERS: u32 = (N_ELLIGIBLE_VOTERS as f64 * TURNOUT) as u32;
+    const N_LEAVE_VOTES: u32 = (SHARE_OF_LEAVE * (N_VOTERS as f64)) as u32;
+    let counts: Vec<u32> = vec![N_ELLIGIBLE_VOTERS/2; 2];
+
+    println!("The simulations will use the following boundary conditions:");
+    println!("N_ROUNDS: {}", N_ROUNDS);
+    println!("N_ELLIGIBLE_VOTERS: {}", N_ELLIGIBLE_VOTERS);
+    println!("N_LEAVE_VOTES: {}", N_LEAVE_VOTES);
+    println!("N_VOTERS: {}", N_VOTERS);
+    println!("SHARE_OF_LEAVE: {}", SHARE_OF_LEAVE);
+    println!("TURNOUT: {}", TURNOUT);
+
+
+    let n_extreme = monte_carlo_significance_test_for_binary_election(
+        counts.as_slice(), N_VOTERS, N_ROUNDS, N_LEAVE_VOTES
+    );
+    let p = n_extreme as f64 / N_ROUNDS as f64;
     println!(
-        "The result of the hypergeometric sampling is {}",
-        sample_hypergeometric(vec![N_ELLIGIBLE_VOTERS/2, N_ELLIGIBLE_VOTERS/2], N_VOTERS)[0]
+        "{} out of {} sampled polls had a more extreme result. (p = {}).",
+        n_extreme,
+        N_ROUNDS,
+        p,
     );
 }
