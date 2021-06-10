@@ -21,7 +21,9 @@ fn sample_hypergeometric(counts: &[u32], k: u32, mut rng: &mut ThreadRng) -> Vec
     return ret_vec;
 }
 
-
+/// Simulate plenty of two-option-polls
+///
+/// Returns: number of polls with more extreme outcome than n_votes_majority_option.
 fn monte_carlo_significance_test_for_binary_election(
     counts: &[u32], k: u32, nrounds: usize, n_votes_majority_option: u32
 ) -> u32 {
