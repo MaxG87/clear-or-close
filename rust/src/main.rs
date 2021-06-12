@@ -43,7 +43,7 @@ fn monte_carlo_significance_test_for_binary_election(
 fn main() {
     const N_ROUNDS: usize = 90_000;
     // const N_ELLIGIBLE_VOTERS: u32 = 46_500_000;
-    const N_ELLIGIBLE_VOTERS: u32 = 1_000;
+    const N_ELLIGIBLE_VOTERS: u32 = 2_500;
     const TURNOUT: f64 = 0.7221;
     const SHARE_OF_LEAVE: f64 = 0.5189;
     const N_VOTERS: u32 = (N_ELLIGIBLE_VOTERS as f64 * TURNOUT) as u32;
