@@ -1,26 +1,25 @@
 use rand::distributions::*;
-use rand::thread_rng;
 use rand::rngs::ThreadRng;
-
+use rand::thread_rng;
 
 trait Urn {
     fn new(counts: &[u32]) -> Self;
     fn draw(&mut self, rng: &mut ThreadRng) -> usize;
 }
 
-
 struct StdLibUrn {
-    counts: Vec<u32>
+    counts: Vec<u32>,
 }
-
 
 impl Urn for StdLibUrn {
     fn new(counts: &[u32]) -> Self {
-        let mut ret_self = Self{counts: Vec::with_capacity(counts.len())};
+        let mut ret_self = Self {
+            counts: Vec::with_capacity(counts.len()),
+        };
         for elem in counts.iter() {
             ret_self.counts.push(*elem);
         }
-        return ret_self
+        return ret_self;
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {
@@ -31,14 +30,17 @@ impl Urn for StdLibUrn {
     }
 }
 
-
 /// Sample from Hypergeometric Distribution
 ///
 /// This function takes a vector of counts and draws k elements from those
 /// without replacement. It will return how often each element was drawn.
 ///
 /// The returned vector will be hypergeometric distributed.
-fn sample_hypergeometric<GenericUrn: Urn>(counts: &[u32], k: u32, mut rng: &mut ThreadRng) -> Vec<u32> {
+fn sample_hypergeometric<GenericUrn: Urn>(
+    counts: &[u32],
+    k: u32,
+    mut rng: &mut ThreadRng,
+) -> Vec<u32> {
     let mut ret_vec = vec![0; counts.len()];
     let mut urn = GenericUrn::new(counts);
     for _ in 0..k {
@@ -52,7 +54,10 @@ fn sample_hypergeometric<GenericUrn: Urn>(counts: &[u32], k: u32, mut rng: &mut 
 ///
 /// Returns: number of polls with more extreme outcome than n_votes_majority_option.
 fn monte_carlo_significance_test_for_binary_election(
-    counts: &[u32], k: u32, nrounds: usize, n_votes_majority_option: u32
+    counts: &[u32],
+    k: u32,
+    nrounds: usize,
+    n_votes_majority_option: u32,
 ) -> u32 {
     let mut is_extreme = 0;
     let mut rng = thread_rng();
@@ -66,7 +71,6 @@ fn monte_carlo_significance_test_for_binary_election(
     return is_extreme;
 }
 
-
 fn main() {
     const N_ROUNDS: usize = 90_000;
     // const N_ELLIGIBLE_VOTERS: u32 = 46_500_000;
@@ -75,7 +79,7 @@ fn main() {
     const SHARE_OF_LEAVE: f64 = 0.5189;
     const N_VOTERS: u32 = (N_ELLIGIBLE_VOTERS as f64 * TURNOUT) as u32;
     const N_LEAVE_VOTES: u32 = (SHARE_OF_LEAVE * (N_VOTERS as f64)) as u32;
-    let counts: Vec<u32> = vec![N_ELLIGIBLE_VOTERS/2; 2];
+    let counts: Vec<u32> = vec![N_ELLIGIBLE_VOTERS / 2; 2];
 
     println!("The simulations will use the following boundary conditions:");
     println!("N_ROUNDS: {}", N_ROUNDS);
@@ -85,15 +89,15 @@ fn main() {
     println!("SHARE_OF_LEAVE: {}", SHARE_OF_LEAVE);
     println!("TURNOUT: {}", TURNOUT);
 
-
     let n_extreme = monte_carlo_significance_test_for_binary_election(
-        counts.as_slice(), N_VOTERS, N_ROUNDS, N_LEAVE_VOTES
+        counts.as_slice(),
+        N_VOTERS,
+        N_ROUNDS,
+        N_LEAVE_VOTES,
     );
     let p = n_extreme as f64 / N_ROUNDS as f64;
     println!(
         "{} out of {} sampled polls had a more extreme result. (p = {}).",
-        n_extreme,
-        N_ROUNDS,
-        p,
+        n_extreme, N_ROUNDS, p,
     );
 }
