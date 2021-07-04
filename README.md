@@ -49,6 +49,7 @@ The runtime is prohibitive for large values of $M$.
 
 * Find clever approximations so sampling gets faster. An $O(k)$ way to sample
   from a k-dimensional Hypergeometric dimension would be awesome.
+  HINT: https://wikis.hu-berlin.de/mmstat/Approximation_von_Verteilungen#Approximation_durch_die_Normalverteilung_2
 
 * Write tests!
 
