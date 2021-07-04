@@ -1,5 +1,8 @@
+use clap::{AppSettings, Clap};
 use rand::rngs::ThreadRng;
 use rand::thread_rng;
+use std::fmt;
+use std::str::FromStr;
 
 mod urns;
 
@@ -44,6 +47,45 @@ fn monte_carlo_significance_test_for_binary_election<Urn: urns::Urn>(
     return is_extreme;
 }
 
+enum SamplingMode {
+    Approximate,
+    FastExact,
+    FastSTDLIB,
+}
+
+impl fmt::Display for SamplingMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            SamplingMode::Approximate => "Approximate",
+            _ => "Others",
+        };
+        write!(f, "{}", name)
+    }
+}
+
+impl FromStr for SamplingMode {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let lc_string = s.to_lowercase();
+        let lc_str: &str = lc_string.as_str();
+        match lc_str {
+            "approximate" => Ok(SamplingMode::Approximate),
+            "fastexact" => Ok(SamplingMode::FastExact),
+            "faststdlib" => Ok(SamplingMode::FastSTDLIB),
+            _ => Err("Got invalid sampling mode"),
+        }
+    }
+}
+
+#[derive(Clap)]
+#[clap(version = "1.0", author = "Max Görner")]
+#[clap(setting = AppSettings::ColoredHelp)]
+struct CLIOpts {
+    #[clap(long)]
+    sampling_mode: SamplingMode,
+}
+
 fn main() {
     const N_ROUNDS: usize = 90_000;
     // const N_ELLIGIBLE_VOTERS: u32 = 46_500_000;
@@ -54,6 +96,8 @@ fn main() {
     const N_LEAVE_VOTES: u32 = (SHARE_OF_LEAVE * (N_VOTERS as f64)) as u32;
     let counts: Vec<u32> = vec![N_ELLIGIBLE_VOTERS / 2; 2];
 
+    let opts = CLIOpts::parse();
+
     println!("The simulations will use the following boundary conditions:");
     println!("N_ROUNDS: {}", N_ROUNDS);
     println!("N_ELLIGIBLE_VOTERS: {}", N_ELLIGIBLE_VOTERS);
@@ -62,20 +106,19 @@ fn main() {
     println!("SHARE_OF_LEAVE: {}", SHARE_OF_LEAVE);
     println!("TURNOUT: {}", TURNOUT);
 
-    let n_extreme_stdlib = monte_carlo_significance_test_for_binary_election::<
-        urns::ExactStdLibUrn,
-    >(
-        counts.as_slice(),
-        N_VOTERS,
-        N_ROUNDS,
-        N_LEAVE_VOTES,
-    );
-    let n_extreme_fast = monte_carlo_significance_test_for_binary_election::<
-        urns::ExactFastUrn,
-    >(
-        counts.as_slice(), N_VOTERS, N_ROUNDS, N_LEAVE_VOTES
-    );
-    let n_extreme = n_extreme_fast + n_extreme_stdlib - n_extreme_stdlib;
+    let n_extreme: u32 = match opts.sampling_mode {
+        SamplingMode::Approximate => 1337,
+        SamplingMode::FastExact => {
+            monte_carlo_significance_test_for_binary_election::<
+                urns::ExactStdLibUrn,
+            >(counts.as_slice(), N_VOTERS, N_ROUNDS, N_LEAVE_VOTES)
+        }
+        SamplingMode::FastSTDLIB => {
+            monte_carlo_significance_test_for_binary_election::<
+                urns::ExactFastUrn,
+            >(counts.as_slice(), N_VOTERS, N_ROUNDS, N_LEAVE_VOTES)
+        }
+    };
     let p = n_extreme as f64 / N_ROUNDS as f64;
     println!(
         "{} out of {} sampled polls had a more extreme result. (p = {}).",
