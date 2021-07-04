@@ -17,9 +17,7 @@ pub struct ExactFastUrn {
 
 impl Urn for ExactStdLibUrn {
     fn new(counts: &[u32]) -> Self {
-        let mut ret_self = Self {
-            counts: Vec::with_capacity(counts.len()),
-        };
+        let mut ret_self = Self { counts: Vec::with_capacity(counts.len()) };
         for elem in counts.iter() {
             ret_self.counts.push(*elem);
         }
@@ -42,10 +40,7 @@ impl Urn for ExactFastUrn {
             sum += elem;
             counts_copy.push(*elem);
         }
-        return Self {
-            counts: counts_copy,
-            sum: sum,
-        };
+        return Self { counts: counts_copy, sum: sum };
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {

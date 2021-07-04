@@ -62,17 +62,18 @@ fn main() {
     println!("SHARE_OF_LEAVE: {}", SHARE_OF_LEAVE);
     println!("TURNOUT: {}", TURNOUT);
 
-    let n_extreme_stdlib = monte_carlo_significance_test_for_binary_election::<urns::ExactStdLibUrn>(
+    let n_extreme_stdlib = monte_carlo_significance_test_for_binary_election::<
+        urns::ExactStdLibUrn,
+    >(
         counts.as_slice(),
         N_VOTERS,
         N_ROUNDS,
         N_LEAVE_VOTES,
     );
-    let n_extreme_fast = monte_carlo_significance_test_for_binary_election::<urns::ExactFastUrn>(
-        counts.as_slice(),
-        N_VOTERS,
-        N_ROUNDS,
-        N_LEAVE_VOTES,
+    let n_extreme_fast = monte_carlo_significance_test_for_binary_election::<
+        urns::ExactFastUrn,
+    >(
+        counts.as_slice(), N_VOTERS, N_ROUNDS, N_LEAVE_VOTES
     );
     let n_extreme = n_extreme_fast + n_extreme_stdlib - n_extreme_stdlib;
     let p = n_extreme as f64 / N_ROUNDS as f64;
