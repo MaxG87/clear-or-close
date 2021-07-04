@@ -26,7 +26,7 @@ fn sample_hypergeometric<GenericUrn: urns::Urn>(
 /// Simulate plenty of two-option-polls
 ///
 /// Returns: number of polls with more extreme outcome than n_votes_majority_option.
-fn monte_carlo_significance_test_for_binary_election(
+fn monte_carlo_significance_test_for_binary_election<Urn: urns::Urn>(
     counts: &[u32],
     k: u32,
     nrounds: usize,
@@ -35,7 +35,7 @@ fn monte_carlo_significance_test_for_binary_election(
     let mut is_extreme = 0;
     let mut rng = thread_rng();
     for _ in 0..nrounds {
-        let result = sample_hypergeometric::<urns::ExactStdLibUrn>(&counts, k, &mut rng);
+        let result = sample_hypergeometric::<Urn>(&counts, k, &mut rng);
         let sampled_majority_votes: u32 = *result.iter().max().unwrap();
         if sampled_majority_votes >= n_votes_majority_option {
             is_extreme += 1;
@@ -62,12 +62,19 @@ fn main() {
     println!("SHARE_OF_LEAVE: {}", SHARE_OF_LEAVE);
     println!("TURNOUT: {}", TURNOUT);
 
-    let n_extreme = monte_carlo_significance_test_for_binary_election(
+    let n_extreme_stdlib = monte_carlo_significance_test_for_binary_election::<urns::ExactStdLibUrn>(
         counts.as_slice(),
         N_VOTERS,
         N_ROUNDS,
         N_LEAVE_VOTES,
     );
+    let n_extreme_fast = monte_carlo_significance_test_for_binary_election::<urns::ExactFastUrn>(
+        counts.as_slice(),
+        N_VOTERS,
+        N_ROUNDS,
+        N_LEAVE_VOTES,
+    );
+    let n_extreme = n_extreme_fast + n_extreme_stdlib - n_extreme_stdlib;
     let p = n_extreme as f64 / N_ROUNDS as f64;
     println!(
         "{} out of {} sampled polls had a more extreme result. (p = {}).",
