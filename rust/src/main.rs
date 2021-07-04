@@ -35,7 +35,7 @@ fn monte_carlo_significance_test_for_binary_election(
     let mut is_extreme = 0;
     let mut rng = thread_rng();
     for _ in 0..nrounds {
-        let result = sample_hypergeometric::<urns::StdLibUrn>(&counts, k, &mut rng);
+        let result = sample_hypergeometric::<urns::ExactStdLibUrn>(&counts, k, &mut rng);
         let sampled_majority_votes: u32 = *result.iter().max().unwrap();
         if sampled_majority_votes >= n_votes_majority_option {
             is_extreme += 1;

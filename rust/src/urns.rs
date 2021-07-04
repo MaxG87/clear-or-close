@@ -6,11 +6,11 @@ pub trait Urn {
     fn draw(&mut self, rng: &mut ThreadRng) -> usize;
 }
 
-pub struct StdLibUrn {
+pub struct ExactStdLibUrn {
     counts: Vec<u32>,
 }
 
-impl Urn for StdLibUrn {
+impl Urn for ExactStdLibUrn {
     fn new(counts: &[u32]) -> Self {
         let mut ret_self = Self {
             counts: Vec::with_capacity(counts.len()),
