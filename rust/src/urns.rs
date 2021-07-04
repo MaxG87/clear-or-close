@@ -11,7 +11,7 @@ pub struct ExactStdLibUrn {
 }
 
 pub struct ExactFastUrn {
-    counts: Vec<u32>,
+    accsum: Vec<u32>,
     sum: usize,
 }
 
@@ -34,21 +34,33 @@ impl Urn for ExactStdLibUrn {
 
 impl Urn for ExactFastUrn {
     fn new(counts: &[u32]) -> Self {
-        let mut counts_copy = Vec::with_capacity(counts.len());
+        let mut accsum = Vec::with_capacity(counts.len());
         let mut sum = 0;
         for elem in counts {
             sum += elem;
-            counts_copy.push(*elem);
+            accsum.push(sum);
         }
-        return Self { counts: counts_copy, sum: sum as usize };
+        return Self { accsum: accsum, sum: sum as usize };
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {
-        let dist = Uniform::new(0, self.sum);
+        let dist = Uniform::new_inclusive(0, self.sum);
         let point = dist.sample(&mut rng);
-        let position = 0usize;
+        let position = find_position(self.accsum.as_slice(), point);
         self.sum -= 1;
-        self.counts[position] -= 1;
+        for i in position..self.accsum.len() {
+            self.accsum[i] -= 1;
+        }
         return position;
     }
+}
+
+fn find_position(accsum: &[u32], point: usize) -> usize {
+    for i in 0..accsum.len() {
+        let elem = accsum[i] as usize;
+        if elem >= point {
+            return i;
+        }
+    }
+    panic!("Sampling a valid position failed!")
 }
