@@ -19,7 +19,7 @@ impl Urn for ExactStdLibUrn {
     fn new(counts: &[u32]) -> Self {
         let mut counts_copy = Vec::with_capacity(counts.len());
         counts_copy.clone_from_slice(counts);
-        return Self { counts: counts_copy};
+        return Self { counts: counts_copy };
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {
@@ -54,9 +54,8 @@ impl Urn for ExactFastUrn {
 }
 
 fn find_position(accsum: &[u32], point: usize) -> usize {
-    for i in 0..accsum.len() {
-        let elem = accsum[i] as usize;
-        if elem >= point {
+    for (i, elem) in accsum.iter().enumerate() {
+        if *elem as usize >= point {
             return i;
         }
     }
