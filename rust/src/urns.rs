@@ -12,7 +12,7 @@ pub struct ExactStdLibUrn {
 
 pub struct ExactFastUrn {
     counts: Vec<u32>,
-    sum: u32,
+    sum: usize,
 }
 
 impl Urn for ExactStdLibUrn {
@@ -40,13 +40,15 @@ impl Urn for ExactFastUrn {
             sum += elem;
             counts_copy.push(*elem);
         }
-        return Self { counts: counts_copy, sum: sum };
+        return Self { counts: counts_copy, sum: sum as usize };
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {
-        let dist = WeightedIndex::new(self.counts.as_slice()).unwrap();
-        let sampled_elem = dist.sample(&mut rng);
-        self.counts[sampled_elem] -= 1;
-        return sampled_elem;
+        let dist = Uniform::new(0, self.sum);
+        let point = dist.sample(&mut rng);
+        let position = 0usize;
+        self.sum -= 1;
+        self.counts[position] -= 1;
+        return position;
     }
 }
