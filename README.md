@@ -23,8 +23,8 @@ chance. However, there is no correlation between the choice of a voter and
 whether she will attend the referendum.
 
 Thus, the outcome of the referendum, according to the statistical model
-sketched above, can be modelled by drawing $M$ balls from an urn with $\frac 12
-N$ red and $\frac 12 N$ blue balls. This is a special case of the
+sketched above, can be modelled by drawing $M$ balls from an urn with
+$\frac 12 N$ red and $\frac 12 N$ blue balls. This is a special case of the
 Hypergeometrice Distribution.
 
 A sampled result is considered to be _at least as extreme_ than the result that
