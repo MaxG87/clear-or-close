@@ -12,11 +12,10 @@ chance to present a Monte Carlo test with recent relevance.
 
 The performed statistical test is based on MonteCarlo testing. Here, $N$
 samples of a suitable model are drawn and checked wheter they are at least as
-extreme than the referendum in question. 
+extreme than the referendum in question.
 
 Let $N$ be the number of entitled voters, $0 < M <= N$ be the number of actual
 voters and blue and red the options to vote for.
-the number of voters that choose option 2.
 
 The statistical model is as follows. It assumes that every voter is decided on
 exactly one of the options. Who actually attends the referendum is up to
