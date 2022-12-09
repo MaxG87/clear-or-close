@@ -25,7 +25,7 @@ whether she will attend the referendum.
 Thus, the outcome of the referendum, according to the statistical model
 sketched above, can be modelled by drawing $M$ balls from an urn with
 $\frac 12 N$ red and $\frac 12 N$ blue balls. This is a special case of the
-Hypergeometrice Distribution.
+Hypergeometric Distribution.
 
 A sampled result is considered to be _at least as extreme_ than the result that
 is tested for significance if one option got at least as many votes than the
