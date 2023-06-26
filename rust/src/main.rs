@@ -15,12 +15,12 @@ mod urns;
 fn sample_hypergeometric<GenericUrn: urns::Urn>(
     counts: &[u32],
     k: u32,
-    mut rng: &mut ThreadRng,
+    rng: &mut ThreadRng,
 ) -> Vec<u32> {
     let mut ret_vec = vec![0; counts.len()];
     let mut urn = GenericUrn::new(counts);
     for _ in 0..k {
-        let sampled_elem: usize = urn.draw(&mut rng);
+        let sampled_elem: usize = urn.draw(rng);
         ret_vec[sampled_elem] += 1;
     }
     ret_vec
@@ -38,7 +38,7 @@ fn monte_carlo_significance_test_for_binary_election<Urn: urns::Urn>(
     let mut is_extreme = 0;
     let mut rng = thread_rng();
     for _ in 0..nrounds {
-        let result = sample_hypergeometric::<Urn>(&counts, k, &mut rng);
+        let result = sample_hypergeometric::<Urn>(counts, k, &mut rng);
         let sampled_majority_votes: u32 = *result.iter().max().unwrap();
         if sampled_majority_votes >= n_votes_majority_option {
             is_extreme += 1;
