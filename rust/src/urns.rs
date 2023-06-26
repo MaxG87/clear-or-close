@@ -40,7 +40,7 @@ impl Urn for ExactFastUrn {
             sum += elem;
             accsum.push(sum);
         }
-        Self { accsum: accsum, sum: sum as usize }
+        Self { accsum, sum: sum as usize }
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {
