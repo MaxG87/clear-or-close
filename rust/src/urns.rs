@@ -21,14 +21,14 @@ impl Urn for ExactStdLibUrn {
         for elem in counts {
             counts_copy.push(*elem);
         }
-        return Self { counts: counts_copy };
+        Self { counts: counts_copy }
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {
         let dist = WeightedIndex::new(self.counts.as_slice()).unwrap();
         let sampled_elem = dist.sample(&mut rng);
         self.counts[sampled_elem] -= 1;
-        return sampled_elem;
+        sampled_elem
     }
 }
 
@@ -40,7 +40,7 @@ impl Urn for ExactFastUrn {
             sum += elem;
             accsum.push(sum);
         }
-        return Self { accsum: accsum, sum: sum as usize };
+        Self { accsum: accsum, sum: sum as usize }
     }
 
     fn draw(&mut self, mut rng: &mut ThreadRng) -> usize {
@@ -51,7 +51,7 @@ impl Urn for ExactFastUrn {
         for i in position..self.accsum.len() {
             self.accsum[i] -= 1;
         }
-        return position;
+        position
     }
 }
 

@@ -23,7 +23,7 @@ fn sample_hypergeometric<GenericUrn: urns::Urn>(
         let sampled_elem: usize = urn.draw(&mut rng);
         ret_vec[sampled_elem] += 1;
     }
-    return ret_vec;
+    ret_vec
 }
 
 /// Simulate plenty of two-option-polls
@@ -44,7 +44,7 @@ fn monte_carlo_significance_test_for_binary_election<Urn: urns::Urn>(
             is_extreme += 1;
         }
     }
-    return is_extreme;
+    is_extreme
 }
 
 enum SamplingMode {
